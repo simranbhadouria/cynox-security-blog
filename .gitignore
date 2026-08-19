@@ -27,3 +27,9 @@ backend/.env
 .env*
 api/index.js
 backend/.env
+node_modules/
+.env
+backend/.env
+.vscode/
+dist/
+build/
