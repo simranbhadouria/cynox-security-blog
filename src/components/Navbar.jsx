@@ -7,7 +7,9 @@ import {
     Cloud,
     Monitor,
     Building2,
-    Briefcase
+    Briefcase,
+    Menu,
+    X
 } from "lucide-react";
 
 function Navbar() {
@@ -15,21 +17,40 @@ function Navbar() {
     const [solutionsOpen, setSolutionsOpen] = useState(false);
     const [platformOpen, setPlatformOpen] = useState(false);
     const [aboutOpen, setAboutOpen] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
         <nav className="navbar">
 
-            {/* Logo */}
-            <div className="logo">
-                Cynox Global
+            {/* Logo + Mobile Menu Button */}
+            <div className="navbar-top">
+
+                <div className="logo">
+                    Cynox Global
+                </div>
+
+                <button
+                    className="mobile-menu-btn"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                    aria-label="Toggle menu"
+                >
+                    {mobileOpen ? <X size={26} /> : <Menu size={26} />}
+                </button>
+
             </div>
 
 
             {/* Menu */}
-            <div className="nav-menu">
-                <Link className="nav-item" to="/">
+            <div className={`nav-menu ${mobileOpen ? "mobile-open" : ""}`}>
+
+                <Link
+                    className="nav-item"
+                    to="/"
+                    onClick={() => setMobileOpen(false)}
+                >
                     Home
                 </Link>
+
 
                 {/* Solutions */}
                 <div
@@ -47,7 +68,6 @@ function Navbar() {
                     </Link>
 
                     <ChevronDown size={16} />
-
 
                     {solutionsOpen && (
                         <div className="dropdown-menu">
@@ -73,7 +93,6 @@ function Navbar() {
                 </div>
 
 
-
                 {/* Platform */}
                 <div
                     className="nav-item dropdown"
@@ -90,7 +109,6 @@ function Navbar() {
                     </Link>
 
                     <ChevronDown size={16} />
-
 
                     {platformOpen && (
                         <div className="dropdown-menu">
@@ -109,7 +127,6 @@ function Navbar() {
                     )}
 
                 </div>
-
 
 
                 {/* About */}
@@ -156,13 +173,11 @@ function Navbar() {
                     Blog
                 </Link>
 
-
             </div>
 
 
-
             {/* Contact Button */}
-            <div>
+            <div className="navbar-contact">
 
                 <Link
                     className="contact-btn"
@@ -173,10 +188,8 @@ function Navbar() {
 
             </div>
 
-
         </nav>
     );
 }
-
 
 export default Navbar;

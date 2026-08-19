@@ -496,3 +496,377 @@ button:hover {
 
   color: white;
 }
+
+/* =====================================================
+   MOBILE RESPONSIVE
+   ONLY AFFECTS PHONES
+   DESKTOP DESIGN REMAINS SAME
+===================================================== */
+
+@media screen and (max-width: 768px) {
+
+  /* =========================
+     GENERAL
+  ========================= */
+
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  section {
+    width: 100%;
+    padding: 50px 20px;
+  }
+
+
+  /* =========================
+     NAVBAR
+  ========================= */
+
+  .navbar {
+    width: 100%;
+    height: auto;
+
+    padding: 15px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .navbar .logo {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .navbar .nav-menu {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 8px;
+  }
+
+  .navbar .nav-item {
+    width: 100%;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 6px 0;
+
+    font-size: 15px;
+  }
+
+  .navbar .dropdown {
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    justify-content: center;
+  }
+
+  .navbar .dropdown-menu {
+    position: static;
+
+    width: 100%;
+
+    margin-top: 5px;
+
+    border-radius: 12px;
+  }
+
+  .navbar .dropdown-menu a {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 11px;
+
+    font-size: 14px;
+  }
+
+  .navbar .contact-btn {
+    display: block;
+
+    width: 100%;
+
+    max-width: 300px;
+
+    margin: auto;
+
+    text-align: center;
+
+    padding: 12px 20px;
+  }
+
+
+  /* =========================
+     HERO
+  ========================= */
+
+  .hero {
+    width: 100%;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    padding: 50px 20px;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .hero-content h1 {
+    font-size: 38px;
+
+    line-height: 1.2;
+  }
+
+  .hero-content p {
+    width: 100%;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+  }
+
+  .hero-buttons {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+  }
+
+  .hero-image {
+    width: 100%;
+
+    margin-top: 30px;
+  }
+
+  .hero-image img {
+    max-width: 100%;
+
+    height: auto;
+  }
+
+  .glow-circle {
+    width: 280px;
+    height: 280px;
+
+    max-width: 80vw;
+    max-height: 80vw;
+
+    margin: auto;
+  }
+
+
+  /* =========================
+     CARDS
+  ========================= */
+
+  .service-grid,
+  .why-grid {
+    width: 100%;
+
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+  }
+
+  .stats-container {
+    width: 100%;
+
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+  }
+
+  .card,
+  .service-card,
+  .stat-card,
+  .security-card {
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+
+  /* =========================
+     TRUSTED COMPANIES
+  ========================= */
+
+  .company-logos {
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 20px;
+  }
+
+
+  /* =========================
+     IMAGES
+  ========================= */
+
+  img {
+    max-width: 100%;
+
+    height: auto;
+  }
+
+
+  /* =========================
+     PAGE CONTAINER
+  ========================= */
+
+  .page-container {
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 90px 20px 50px;
+  }
+
+
+  /* =========================
+     FOOTER
+  ========================= */
+
+  .footer {
+    width: 100%;
+
+    padding: 40px 20px;
+  }
+
+  .footer-container {
+    width: 100%;
+
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+  }
+
+
+  /* =========================
+     TABLE
+  ========================= */
+
+  table {
+    width: 100%;
+
+    display: block;
+
+    overflow-x: auto;
+  }
+}
+
+
+/* =====================================================
+   SMALL PHONES
+   480px AND BELOW
+===================================================== */
+
+@media screen and (max-width: 480px) {
+
+  section {
+    padding: 40px 15px;
+  }
+
+  .navbar {
+    padding: 12px 15px;
+  }
+
+  .navbar .logo {
+    font-size: 21px;
+  }
+
+  .navbar .nav-item {
+    font-size: 14px;
+  }
+
+  .navbar .contact-btn {
+    max-width: 100%;
+
+    font-size: 14px;
+
+    padding: 11px 18px;
+  }
+
+
+  /* Hero */
+
+  .hero {
+    padding: 40px 15px;
+  }
+
+  .hero-content h1 {
+    font-size: 30px;
+
+    line-height: 1.2;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .hero-buttons button,
+  .hero-buttons a {
+    width: 100%;
+  }
+
+
+  /* Circle */
+
+  .glow-circle {
+    width: 230px;
+
+    height: 230px;
+
+    max-width: 75vw;
+
+    max-height: 75vw;
+  }
+
+
+  /* Cards */
+
+  .card,
+  .service-card,
+  .stat-card,
+  .security-card {
+    border-radius: 14px;
+  }
+}
