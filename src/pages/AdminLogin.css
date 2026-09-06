@@ -227,7 +227,6 @@
 /* MOBILE */
 
 @media (max-width: 600px) {
-
     .admin-login-card {
         padding: 30px 25px;
     }
@@ -235,4 +234,37 @@
     .admin-login-header h1 {
         font-size: 28px;
     }
+}
+
+
+/* =========================
+   PASSWORD SHOW / HIDE
+========================= */
+
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    line-height: 1;
+    color: #d1d5db;
+}
+
+.password-toggle-btn:hover {
+    opacity: 0.75;
 }

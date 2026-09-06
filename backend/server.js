@@ -65,7 +65,7 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
         }
 
         const imageUrl =
-            `http://localhost:${process.env.PORT || 5000}/uploads/${req.file.filename}`;
+            `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
 
         res.json({
             success: true,
@@ -157,9 +157,7 @@ app.get("/api/test-db", async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server running on port ${PORT}`);
     });
 }
-
-module.exports = app;

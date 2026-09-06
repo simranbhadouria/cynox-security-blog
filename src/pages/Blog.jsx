@@ -1,7 +1,12 @@
 import "./Blog.css";
-import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 function Blog() {
+
+    const { slug } = useParams();
+    const navigate = useNavigate();
+
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -19,7 +24,22 @@ function Blog() {
             .then((data) => {
                 console.log("API Response:", data);
 
-                setBlogs(data.blogs || []);
+                const fetchedBlogs = data.blogs || [];
+
+                setBlogs(fetchedBlogs);
+
+                if (slug) {
+                    const blogBySlug = fetchedBlogs.find(
+                        (blog) => blog.URL_SLUG === slug
+                    );
+
+                    if (blogBySlug) {
+                        setSelectedBlog(blogBySlug);
+                    } else {
+                        setError("Blog not found");
+                    }
+                }
+
                 setLoading(false);
             })
             .catch((error) => {
@@ -28,8 +48,112 @@ function Blog() {
                 setError("Unable to load blogs");
                 setLoading(false);
             });
-    }, []);
+    }, [slug]);
 
+    // =========================
+    // SEO METADATA
+    // =========================
+    useEffect(() => {
+        const defaultTitle = "Cynox Security Blog";
+
+        const defaultDescription =
+            "Cynox Security Blog - Cybersecurity news, awareness and security insights.";
+
+        // =========================
+        // NO BLOG SELECTED
+        // =========================
+        if (!selectedBlog) {
+            document.title = defaultTitle;
+
+            let metaDescription = document.querySelector(
+                'meta[name="description"]'
+            );
+
+            if (!metaDescription) {
+                metaDescription = document.createElement("meta");
+                metaDescription.name = "description";
+
+                document.head.appendChild(metaDescription);
+            }
+
+            metaDescription.setAttribute(
+                "content",
+                defaultDescription
+            );
+
+            const canonical = document.querySelector(
+                'link[rel="canonical"]'
+            );
+
+            if (canonical) {
+                canonical.remove();
+            }
+
+            return;
+        }
+
+        // =========================
+        // SEO TITLE
+        // =========================
+        document.title =
+            selectedBlog.SEO_TITLE ||
+            selectedBlog.TITLE ||
+            defaultTitle;
+
+        // =========================
+        // META DESCRIPTION
+        // =========================
+        let metaDescription = document.querySelector(
+            'meta[name="description"]'
+        );
+
+        if (!metaDescription) {
+            metaDescription = document.createElement("meta");
+
+            metaDescription.name = "description";
+
+            document.head.appendChild(metaDescription);
+        }
+
+        metaDescription.setAttribute(
+            "content",
+            selectedBlog.META_DESCRIPTION ||
+            selectedBlog.DESCRIPTION ||
+            defaultDescription
+        );
+
+        // =========================
+        // CANONICAL URL
+        // =========================
+        let canonical = document.querySelector(
+            'link[rel="canonical"]'
+        );
+
+        if (selectedBlog.CANONICAL_URL) {
+            if (!canonical) {
+                canonical = document.createElement("link");
+
+                canonical.rel = "canonical";
+
+                document.head.appendChild(canonical);
+            }
+
+            canonical.href = selectedBlog.CANONICAL_URL;
+        } else if (canonical) {
+            canonical.remove();
+        }
+
+        // =========================
+        // CLEANUP
+        // =========================
+        return () => {
+            document.title = defaultTitle;
+        };
+    }, [selectedBlog]);
+
+    // =========================
+    // FORMAT DATE
+    // =========================
     const formatDate = (date) => {
         if (!date) {
             return "";
@@ -42,10 +166,16 @@ function Blog() {
         });
     };
 
+    // =========================
+    // IMAGE ERROR
+    // =========================
     const handleImageError = (e) => {
         e.target.style.display = "none";
     };
 
+    // =========================
+    // LOADING
+    // =========================
     if (loading) {
         return (
             <div className="blog-page">
@@ -54,6 +184,9 @@ function Blog() {
         );
     }
 
+    // =========================
+    // ERROR
+    // =========================
     if (error) {
         return (
             <div className="blog-page">
@@ -135,7 +268,13 @@ function Blog() {
 
                             <button
                                 className="read-blog-btn"
-                                onClick={() => setSelectedBlog(blog)}
+                                onClick={() => {
+                                    if (blog.URL_SLUG) {
+                                        navigate(`/blog/${blog.URL_SLUG}`);
+                                    } else {
+                                        setSelectedBlog(blog);
+                                    }
+                                }}
                             >
                                 Read Full Blog
                             </button>
@@ -147,7 +286,6 @@ function Blog() {
                 ))}
 
             </div>
-
 
             {/* =========================
                 FULL BLOG MODAL
@@ -163,11 +301,12 @@ function Blog() {
 
                         <button
                             className="close-blog"
-                            onClick={() => setSelectedBlog(null)}
+                            onClick={() =>
+                                setSelectedBlog(null)
+                            }
                         >
                             ×
                         </button>
-
 
                         {/* FULL BLOG IMAGE */}
 
@@ -180,7 +319,6 @@ function Blog() {
                             />
                         )}
 
-
                         {/* CATEGORY */}
 
                         {selectedBlog.CATEGORY && (
@@ -189,13 +327,11 @@ function Blog() {
                             </p>
                         )}
 
-
                         {/* TITLE */}
 
                         <h1>
                             {selectedBlog.TITLE}
                         </h1>
-
 
                         {/* AUTHOR + DATE */}
 
@@ -205,10 +341,11 @@ function Blog() {
 
                             {" | "}
 
-                            {formatDate(selectedBlog.CREATED_AT)}
+                            {formatDate(
+                                selectedBlog.CREATED_AT
+                            )}
 
                         </div>
-
 
                         {/* DESCRIPTION */}
 
@@ -216,18 +353,24 @@ function Blog() {
                             {selectedBlog.DESCRIPTION}
                         </p>
 
-
                         {/* FULL CONTENT */}
 
                         <div className="blog-full-content">
+
                             {selectedBlog.CONTENT
                                 ?.split(/\r?\n/)
-                                .filter((line) => line.trim() !== "")
+                                .filter(
+                                    (line) =>
+                                        line.trim() !== ""
+                                )
                                 .map((line, index) => (
+
                                     <p key={index}>
                                         {line}
                                     </p>
+
                                 ))}
+
                         </div>
 
                     </div>
@@ -235,7 +378,6 @@ function Blog() {
                 </div>
 
             )}
-
 
         </div>
     );

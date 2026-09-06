@@ -1,14 +1,12 @@
 const express = require("express");
+
 const router = express.Router();
 
 const { getConnection, oracledb } = require("../db");
+
 const authMiddleware = require("../middleware/authMiddleware");
 
-// =====================================================
 // GET ALL BLOGS
-// GET /api/blogs
-// =====================================================
-
 router.get("/", async (req, res) => {
     let connection;
 
@@ -24,6 +22,12 @@ router.get("/", async (req, res) => {
                 IMAGE,
                 AUTHOR,
                 CATEGORY,
+                SEO_TITLE,
+                META_DESCRIPTION,
+                SEO_KEYWORDS,
+                FOCUS_KEYWORD,
+                URL_SLUG,
+                CANONICAL_URL,
                 CREATED_AT,
                 UPDATED_AT
              FROM BLOGS
@@ -61,11 +65,7 @@ router.get("/", async (req, res) => {
 });
 
 
-// =====================================================
 // CREATE BLOG
-// POST /api/blogs
-// =====================================================
-
 router.post("/", authMiddleware, async (req, res) => {
     let connection;
 
@@ -76,7 +76,13 @@ router.post("/", authMiddleware, async (req, res) => {
             content,
             image,
             author,
-            category
+            category,
+            seoTitle,
+            metaDescription,
+            seoKeywords,
+            focusKeyword,
+            urlSlug,
+            canonicalUrl
         } = req.body;
 
         connection = await getConnection();
@@ -91,6 +97,12 @@ router.post("/", authMiddleware, async (req, res) => {
                     IMAGE,
                     AUTHOR,
                     CATEGORY,
+                    SEO_TITLE,
+                    META_DESCRIPTION,
+                    SEO_KEYWORDS,
+                    FOCUS_KEYWORD,
+                    URL_SLUG,
+                    CANONICAL_URL,
                     CREATED_AT,
                     UPDATED_AT
                 )
@@ -103,6 +115,12 @@ router.post("/", authMiddleware, async (req, res) => {
                     :image,
                     :author,
                     :category,
+                    :seoTitle,
+                    :metaDescription,
+                    :seoKeywords,
+                    :focusKeyword,
+                    :urlSlug,
+                    :canonicalUrl,
                     SYSTIMESTAMP,
                     SYSTIMESTAMP
                 )`,
@@ -112,7 +130,13 @@ router.post("/", authMiddleware, async (req, res) => {
                 content,
                 image,
                 author,
-                category
+                category,
+                seoTitle,
+                metaDescription,
+                seoKeywords,
+                focusKeyword,
+                urlSlug,
+                canonicalUrl
             },
             {
                 autoCommit: true
@@ -141,11 +165,7 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 
-// =====================================================
 // UPDATE BLOG
-// PUT /api/blogs/:id
-// =====================================================
-
 router.put("/:id", authMiddleware, async (req, res) => {
     let connection;
 
@@ -158,7 +178,13 @@ router.put("/:id", authMiddleware, async (req, res) => {
             content,
             image,
             author,
-            category
+            category,
+            seoTitle,
+            metaDescription,
+            seoKeywords,
+            focusKeyword,
+            urlSlug,
+            canonicalUrl
         } = req.body;
 
         connection = await getConnection();
@@ -172,6 +198,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
                 IMAGE = :image,
                 AUTHOR = :author,
                 CATEGORY = :category,
+                SEO_TITLE = :seoTitle,
+                META_DESCRIPTION = :metaDescription,
+                SEO_KEYWORDS = :seoKeywords,
+                FOCUS_KEYWORD = :focusKeyword,
+                URL_SLUG = :urlSlug,
+                CANONICAL_URL = :canonicalUrl,
                 UPDATED_AT = SYSTIMESTAMP
              WHERE ID = :id`,
             {
@@ -181,7 +213,13 @@ router.put("/:id", authMiddleware, async (req, res) => {
                 content,
                 image,
                 author,
-                category
+                category,
+                seoTitle,
+                metaDescription,
+                seoKeywords,
+                focusKeyword,
+                urlSlug,
+                canonicalUrl
             },
             {
                 autoCommit: true
@@ -217,11 +255,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 
-// =====================================================
 // DELETE BLOG
-// DELETE /api/blogs/:id
-// =====================================================
-
 router.delete("/:id", authMiddleware, async (req, res) => {
     let connection;
 

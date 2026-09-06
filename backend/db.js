@@ -1,7 +1,7 @@
 const oracledb = require("oracledb");
 require("dotenv").config();
 
-oracledb.initOracleClient({
+({
     libDir: "C:\\oraclexe\\app\\oracle\\product\\11.2.0\\server\\bin"
 });
 
