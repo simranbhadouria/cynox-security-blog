@@ -1,6 +1,8 @@
 import "./AdminLogin.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function AdminLogin() {
     const [email, setEmail] = useState("");
@@ -16,7 +18,7 @@ function AdminLogin() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/auth/login",
+                `${API_BASE_URL}/api/auth/login`,
                 {
                     method: "POST",
                     headers: {
@@ -42,6 +44,7 @@ function AdminLogin() {
             navigate("/admin/blogs");
         } catch (error) {
             console.error("Login error:", error);
+
             setError("Unable to connect to server");
         }
     };
