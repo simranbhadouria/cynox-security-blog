@@ -1,60 +1,110 @@
 import "./Blog.css";
 
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+
+import {
+    useParams,
+    useNavigate
+} from "react-router-dom";
+
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 function Blog() {
 
     const { slug } = useParams();
+
     const navigate = useNavigate();
 
     const [blogs, setBlogs] = useState([]);
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState("");
-    const [selectedBlog, setSelectedBlog] = useState(null);
+
+    const [selectedBlog, setSelectedBlog] =
+        useState(null);
+
+    // =========================
+    // GET BLOGS
+    // =========================
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/blogs")
+
+        fetch(`${API_BASE_URL}/api/blogs`)
+
             .then((response) => {
+
                 if (!response.ok) {
-                    throw new Error("Failed to fetch blogs");
+                    throw new Error(
+                        "Failed to fetch blogs"
+                    );
                 }
 
                 return response.json();
             })
-            .then((data) => {
-                console.log("API Response:", data);
 
-                const fetchedBlogs = data.blogs || [];
+            .then((data) => {
+
+                console.log(
+                    "API Response:",
+                    data
+                );
+
+                const fetchedBlogs =
+                    data.blogs || [];
 
                 setBlogs(fetchedBlogs);
 
                 if (slug) {
-                    const blogBySlug = fetchedBlogs.find(
-                        (blog) => blog.URL_SLUG === slug
-                    );
+
+                    const blogBySlug =
+                        fetchedBlogs.find(
+                            (blog) =>
+                                blog.URL_SLUG === slug
+                        );
 
                     if (blogBySlug) {
-                        setSelectedBlog(blogBySlug);
+
+                        setSelectedBlog(
+                            blogBySlug
+                        );
+
                     } else {
-                        setError("Blog not found");
+
+                        setError(
+                            "Blog not found"
+                        );
                     }
                 }
 
                 setLoading(false);
             })
-            .catch((error) => {
-                console.error("Error fetching blogs:", error);
 
-                setError("Unable to load blogs");
+            .catch((error) => {
+
+                console.error(
+                    "Error fetching blogs:",
+                    error
+                );
+
+                setError(
+                    "Unable to load blogs"
+                );
+
                 setLoading(false);
             });
+
     }, [slug]);
 
     // =========================
     // SEO METADATA
     // =========================
+
     useEffect(() => {
-        const defaultTitle = "Cynox Security Blog";
+
+        const defaultTitle =
+            "Cynox Security Blog";
 
         const defaultDescription =
             "Cynox Security Blog - Cybersecurity news, awareness and security insights.";
@@ -62,18 +112,30 @@ function Blog() {
         // =========================
         // NO BLOG SELECTED
         // =========================
-        if (!selectedBlog) {
-            document.title = defaultTitle;
 
-            let metaDescription = document.querySelector(
-                'meta[name="description"]'
-            );
+        if (!selectedBlog) {
+
+            document.title =
+                defaultTitle;
+
+            let metaDescription =
+                document.querySelector(
+                    'meta[name="description"]'
+                );
 
             if (!metaDescription) {
-                metaDescription = document.createElement("meta");
-                metaDescription.name = "description";
 
-                document.head.appendChild(metaDescription);
+                metaDescription =
+                    document.createElement(
+                        "meta"
+                    );
+
+                metaDescription.name =
+                    "description";
+
+                document.head.appendChild(
+                    metaDescription
+                );
             }
 
             metaDescription.setAttribute(
@@ -81,9 +143,10 @@ function Blog() {
                 defaultDescription
             );
 
-            const canonical = document.querySelector(
-                'link[rel="canonical"]'
-            );
+            const canonical =
+                document.querySelector(
+                    'link[rel="canonical"]'
+                );
 
             if (canonical) {
                 canonical.remove();
@@ -95,6 +158,7 @@ function Blog() {
         // =========================
         // SEO TITLE
         // =========================
+
         document.title =
             selectedBlog.SEO_TITLE ||
             selectedBlog.TITLE ||
@@ -103,16 +167,25 @@ function Blog() {
         // =========================
         // META DESCRIPTION
         // =========================
-        let metaDescription = document.querySelector(
-            'meta[name="description"]'
-        );
+
+        let metaDescription =
+            document.querySelector(
+                'meta[name="description"]'
+            );
 
         if (!metaDescription) {
-            metaDescription = document.createElement("meta");
 
-            metaDescription.name = "description";
+            metaDescription =
+                document.createElement(
+                    "meta"
+                );
 
-            document.head.appendChild(metaDescription);
+            metaDescription.name =
+                "description";
+
+            document.head.appendChild(
+                metaDescription
+            );
         }
 
         metaDescription.setAttribute(
@@ -125,58 +198,85 @@ function Blog() {
         // =========================
         // CANONICAL URL
         // =========================
-        let canonical = document.querySelector(
-            'link[rel="canonical"]'
-        );
+
+        let canonical =
+            document.querySelector(
+                'link[rel="canonical"]'
+            );
 
         if (selectedBlog.CANONICAL_URL) {
+
             if (!canonical) {
-                canonical = document.createElement("link");
 
-                canonical.rel = "canonical";
+                canonical =
+                    document.createElement(
+                        "link"
+                    );
 
-                document.head.appendChild(canonical);
+                canonical.rel =
+                    "canonical";
+
+                document.head.appendChild(
+                    canonical
+                );
             }
 
-            canonical.href = selectedBlog.CANONICAL_URL;
+            canonical.href =
+                selectedBlog.CANONICAL_URL;
+
         } else if (canonical) {
+
             canonical.remove();
         }
 
         // =========================
         // CLEANUP
         // =========================
+
         return () => {
-            document.title = defaultTitle;
+
+            document.title =
+                defaultTitle;
         };
+
     }, [selectedBlog]);
 
     // =========================
     // FORMAT DATE
     // =========================
+
     const formatDate = (date) => {
+
         if (!date) {
             return "";
         }
 
-        return new Date(date).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric"
-        });
+        return new Date(date).toLocaleDateString(
+            "en-US",
+            {
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+            }
+        );
     };
 
     // =========================
     // IMAGE ERROR
     // =========================
+
     const handleImageError = (e) => {
-        e.target.style.display = "none";
+
+        e.target.style.display =
+            "none";
     };
 
     // =========================
     // LOADING
     // =========================
+
     if (loading) {
+
         return (
             <div className="blog-page">
                 Loading blogs...
@@ -187,7 +287,9 @@ function Blog() {
     // =========================
     // ERROR
     // =========================
+
     if (error) {
+
         return (
             <div className="blog-page">
                 {error}
@@ -196,9 +298,12 @@ function Blog() {
     }
 
     return (
+
         <div className="blog-page">
 
-            <h1>Our Blogs</h1>
+            <h1>
+                Our Blogs
+            </h1>
 
             {/* =========================
                 BLOG CARDS
@@ -216,12 +321,16 @@ function Blog() {
                         {/* BLOG IMAGE */}
 
                         {blog.IMAGE && (
+
                             <img
                                 src={blog.IMAGE}
                                 alt={blog.TITLE}
                                 className="blog-image"
-                                onError={handleImageError}
+                                onError={
+                                    handleImageError
+                                }
                             />
+
                         )}
 
                         <div className="blog-content">
@@ -229,9 +338,11 @@ function Blog() {
                             {/* CATEGORY */}
 
                             {blog.CATEGORY && (
+
                                 <p className="blog-category">
                                     {blog.CATEGORY}
                                 </p>
+
                             )}
 
                             {/* TITLE */}
@@ -259,7 +370,9 @@ function Blog() {
                                 </span>
 
                                 <span>
-                                    {formatDate(blog.CREATED_AT)}
+                                    {formatDate(
+                                        blog.CREATED_AT
+                                    )}
                                 </span>
 
                             </div>
@@ -269,10 +382,18 @@ function Blog() {
                             <button
                                 className="read-blog-btn"
                                 onClick={() => {
+
                                     if (blog.URL_SLUG) {
-                                        navigate(`/blog/${blog.URL_SLUG}`);
+
+                                        navigate(
+                                            `/blog/${blog.URL_SLUG}`
+                                        );
+
                                     } else {
-                                        setSelectedBlog(blog);
+
+                                        setSelectedBlog(
+                                            blog
+                                        );
                                     }
                                 }}
                             >
@@ -302,7 +423,9 @@ function Blog() {
                         <button
                             className="close-blog"
                             onClick={() =>
-                                setSelectedBlog(null)
+                                setSelectedBlog(
+                                    null
+                                )
                             }
                         >
                             ×
@@ -311,20 +434,30 @@ function Blog() {
                         {/* FULL BLOG IMAGE */}
 
                         {selectedBlog.IMAGE && (
+
                             <img
-                                src={selectedBlog.IMAGE}
-                                alt={selectedBlog.TITLE}
+                                src={
+                                    selectedBlog.IMAGE
+                                }
+                                alt={
+                                    selectedBlog.TITLE
+                                }
                                 className="blog-full-image"
-                                onError={handleImageError}
+                                onError={
+                                    handleImageError
+                                }
                             />
+
                         )}
 
                         {/* CATEGORY */}
 
                         {selectedBlog.CATEGORY && (
+
                             <p className="blog-category">
                                 {selectedBlog.CATEGORY}
                             </p>
+
                         )}
 
                         {/* TITLE */}
@@ -363,13 +496,15 @@ function Blog() {
                                     (line) =>
                                         line.trim() !== ""
                                 )
-                                .map((line, index) => (
+                                .map(
+                                    (line, index) => (
 
-                                    <p key={index}>
-                                        {line}
-                                    </p>
+                                        <p key={index}>
+                                            {line}
+                                        </p>
 
-                                ))}
+                                    )
+                                )}
 
                         </div>
 
