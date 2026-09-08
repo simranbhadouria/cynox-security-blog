@@ -13,7 +13,14 @@ const chatRoutes = require("./routes/chat");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://https://cynox-security-blog-backup.vercel.app"
+    ],
+    credentials: true
+}));
+
 app.use(express.json());
 
 // =====================================================
