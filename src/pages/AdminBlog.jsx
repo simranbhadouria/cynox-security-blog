@@ -1,21 +1,31 @@
 import "./AdminBlog.css";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
+import {
+    useEffect,
+    useState
+} from "react";
+
+import {
+    useNavigate
+} from "react-router-dom";
+
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function AdminBlog() {
+
     const navigate = useNavigate();
 
     const [blogs, setBlogs] = useState([]);
 
     const [form, setForm] = useState({
+
         title: "",
         description: "",
         content: "",
         image: "",
         author: "",
         category: "",
-
-        // SEO fields
 
         seoTitle: "",
         metaDescription: "",
@@ -25,74 +35,152 @@ function AdminBlog() {
         canonicalUrl: ""
     });
 
-    const [editingId, setEditingId] = useState(null);
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
-    const [uploading, setUploading] = useState(false);
+    const [editingId, setEditingId] =
+        useState(null);
+
+    const [message, setMessage] =
+        useState("");
+
+    const [error, setError] =
+        useState("");
+
+    const [uploading, setUploading] =
+        useState(false);
 
     // ===========================
-    // ACCOUNT / PASSWORD STATES
+    // ACCOUNT STATES
     // ===========================
 
-    const [showAccountMenu, setShowAccountMenu] = useState(false);
-    const [showChangePassword, setShowChangePassword] = useState(false);
+    const [showAccountMenu, setShowAccountMenu] =
+        useState(false);
 
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showChangePassword, setShowChangePassword] =
+        useState(false);
 
-    const [passwordMessage, setPasswordMessage] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [changingPassword, setChangingPassword] = useState(false);
+    const [showUpdateEmail, setShowUpdateEmail] =
+        useState(false);
 
     // ===========================
-    // PASSWORD VISIBILITY STATES
+    // PASSWORD STATES
     // ===========================
 
-    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [currentPassword, setCurrentPassword] =
+        useState("");
+
+    const [newPassword, setNewPassword] =
+        useState("");
+
+    const [confirmPassword, setConfirmPassword] =
+        useState("");
+
+    const [passwordMessage, setPasswordMessage] =
+        useState("");
+
+    const [passwordError, setPasswordError] =
+        useState("");
+
+    const [changingPassword, setChangingPassword] =
+        useState(false);
 
     // ===========================
-    // EMAIL UPDATE STATES
+    // PASSWORD VISIBILITY
     // ===========================
 
-    const [showUpdateEmail, setShowUpdateEmail] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] =
+        useState(false);
 
-    const [currentEmail, setCurrentEmail] = useState(
-        localStorage.getItem("adminEmail") || ""
-    );
+    const [showNewPassword, setShowNewPassword] =
+        useState(false);
 
-    const [newEmail, setNewEmail] = useState("");
-    const [emailPassword, setEmailPassword] = useState("");
-    const [showEmailPassword, setShowEmailPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] =
+        useState(false);
 
-    const [emailMessage, setEmailMessage] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [updatingEmail, setUpdatingEmail] = useState(false);
+    // ===========================
+    // EMAIL STATES
+    // ===========================
+
+    const [currentEmail, setCurrentEmail] =
+        useState(
+            localStorage.getItem("adminEmail") || ""
+        );
+
+    const [newEmail, setNewEmail] =
+        useState("");
+
+    const [emailPassword, setEmailPassword] =
+        useState("");
+
+    const [showEmailPassword, setShowEmailPassword] =
+        useState(false);
+
+    const [emailMessage, setEmailMessage] =
+        useState("");
+
+    const [emailError, setEmailError] =
+        useState("");
+
+    const [updatingEmail, setUpdatingEmail] =
+        useState(false);
+
+    // ===========================
+    // RESET FORM
+    // ===========================
+
+    const resetForm = () => {
+
+        setForm({
+            title: "",
+            description: "",
+            content: "",
+            image: "",
+            author: "",
+            category: "",
+
+            seoTitle: "",
+            metaDescription: "",
+            seoKeywords: "",
+            focusKeyword: "",
+            urlSlug: "",
+            canonicalUrl: ""
+        });
+    };
 
     // ===========================
     // GET BLOGS
     // ===========================
 
     const fetchBlogs = async () => {
+
         try {
+
             const response = await fetch(
-                "http://localhost:5000/api/blogs"
+                `${API_BASE_URL}/api/blogs`
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (response.ok) {
-                setBlogs(data.blogs || []);
+
+                setBlogs(
+                    data.blogs || []
+                );
+
             }
+
         } catch (error) {
-            console.error("Fetch blogs error:", error);
+
+            console.error(
+                "Fetch blogs error:",
+                error
+            );
         }
     };
 
     useEffect(() => {
+
         fetchBlogs();
+
     }, []);
 
     // ===========================
@@ -100,9 +188,11 @@ function AdminBlog() {
     // ===========================
 
     const handleChange = (e) => {
+
         setForm({
             ...form,
-            [e.target.name]: e.target.value
+            [e.target.name]:
+                e.target.value
         });
     };
 
@@ -111,49 +201,84 @@ function AdminBlog() {
     // ===========================
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
         setMessage("");
         setError("");
 
-        const token = localStorage.getItem("adminToken");
+        const token =
+            localStorage.getItem(
+                "adminToken"
+            );
 
         if (!token) {
+
             navigate("/admin/login");
+
             return;
         }
 
         try {
+
             const url = editingId
-                ? `http://localhost:5000/api/blogs/${editingId}`
-                : "http://localhost:5000/api/blogs";
+                ? `${API_BASE_URL}/api/blogs/${editingId}`
+                : `${API_BASE_URL}/api/blogs`;
 
-            const method = editingId ? "PUT" : "POST";
+            const method =
+                editingId
+                    ? "PUT"
+                    : "POST";
 
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(form)
-            });
+            const response =
+                await fetch(url, {
 
-            const data = await response.json();
+                    method,
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${token}`
+                    },
+
+                    body:
+                        JSON.stringify(form)
+                });
+
+            const data =
+                await response.json();
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem("adminToken");
-                    localStorage.removeItem("adminEmail");
-                    navigate("/admin/login");
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "adminToken"
+                    );
+
+                    localStorage.removeItem(
+                        "adminEmail"
+                    );
+
+                    navigate(
+                        "/admin/login"
+                    );
+
                     return;
                 }
 
                 setError(
                     data.message ||
-                    (editingId
-                        ? "Failed to update blog"
-                        : "Failed to create blog")
+                    (
+                        editingId
+                            ? "Failed to update blog"
+                            : "Failed to create blog"
+                    )
                 );
 
                 return;
@@ -165,27 +290,22 @@ function AdminBlog() {
                     : "Blog created successfully!"
             );
 
-            setForm({
-                title: "",
-                description: "",
-                content: "",
-                image: "",
-                author: "",
-                category: "",
-                seoTitle: "",
-                metaDescription: "",
-                seoKeywords: "",
-                focusKeyword: "",
-                urlSlug: "",
-                canonicalUrl: ""
-            });
+            resetForm();
 
             setEditingId(null);
 
             fetchBlogs();
+
         } catch (error) {
-            console.error("Save blog error:", error);
-            setError("Unable to connect to server");
+
+            console.error(
+                "Save blog error:",
+                error
+            );
+
+            setError(
+                "Unable to connect to server"
+            );
         }
     };
 
@@ -194,24 +314,50 @@ function AdminBlog() {
     // ===========================
 
     const handleEdit = (blog) => {
-        setForm({
-            title: blog.TITLE || "",
-            description: blog.DESCRIPTION || "",
-            content: blog.CONTENT || "",
-            image: blog.IMAGE || "",
-            author: blog.AUTHOR || "",
-            category: blog.CATEGORY || "",
 
-            // SEO fields
-            seoTitle: blog.SEO_TITLE || "",
-            metaDescription: blog.META_DESCRIPTION || "",
-            seoKeywords: blog.SEO_KEYWORDS || "",
-            focusKeyword: blog.FOCUS_KEYWORD || "",
-            urlSlug: blog.URL_SLUG || "",
-            canonicalUrl: blog.CANONICAL_URL || ""
+        setForm({
+
+            title:
+                blog.TITLE || "",
+
+            description:
+                blog.DESCRIPTION || "",
+
+            content:
+                blog.CONTENT || "",
+
+            image:
+                blog.IMAGE || "",
+
+            author:
+                blog.AUTHOR || "",
+
+            category:
+                blog.CATEGORY || "",
+
+            seoTitle:
+                blog.SEO_TITLE || "",
+
+            metaDescription:
+                blog.META_DESCRIPTION || "",
+
+            seoKeywords:
+                blog.SEO_KEYWORDS || "",
+
+            focusKeyword:
+                blog.FOCUS_KEYWORD || "",
+
+            urlSlug:
+                blog.URL_SLUG || "",
+
+            canonicalUrl:
+                blog.CANONICAL_URL || ""
         });
 
-        setEditingId(blog.ID);
+        setEditingId(
+            blog.ID
+        );
+
         setMessage("");
         setError("");
 
@@ -226,22 +372,10 @@ function AdminBlog() {
     // ===========================
 
     const handleCancelEdit = () => {
+
         setEditingId(null);
 
-        setForm({
-            title: "",
-            description: "",
-            content: "",
-            image: "",
-            author: "",
-            category: "",
-            seoTitle: "",
-            metaDescription: "",
-            seoKeywords: "",
-            focusKeyword: "",
-            urlSlug: "",
-            canonicalUrl: ""
-        });
+        resetForm();
 
         setMessage("");
         setError("");
@@ -252,54 +386,93 @@ function AdminBlog() {
     // ===========================
 
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm(
-            "Are you sure you want to delete this blog?"
-        );
+
+        const confirmDelete =
+            window.confirm(
+                "Are you sure you want to delete this blog?"
+            );
 
         if (!confirmDelete) {
             return;
         }
 
-        const token = localStorage.getItem("adminToken");
+        const token =
+            localStorage.getItem(
+                "adminToken"
+            );
 
         if (!token) {
-            navigate("/admin/login");
+
+            navigate(
+                "/admin/login"
+            );
+
             return;
         }
 
         try {
-            const response = await fetch(
-                `http://localhost:5000/api/blogs/${id}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
 
-            const data = await response.json();
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/blogs/${id}`,
+                    {
+                        method: "DELETE",
+
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+            const data =
+                await response.json();
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem("adminToken");
-                    localStorage.removeItem("adminEmail");
-                    navigate("/admin/login");
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "adminToken"
+                    );
+
+                    localStorage.removeItem(
+                        "adminEmail"
+                    );
+
+                    navigate(
+                        "/admin/login"
+                    );
+
                     return;
                 }
 
                 setError(
-                    data.message || "Failed to delete blog"
+                    data.message ||
+                    "Failed to delete blog"
                 );
 
                 return;
             }
 
-            setMessage("Blog deleted successfully!");
+            setMessage(
+                "Blog deleted successfully!"
+            );
+
             fetchBlogs();
+
         } catch (error) {
-            console.error("Delete blog error:", error);
-            setError("Unable to connect to server");
+
+            console.error(
+                "Delete blog error:",
+                error
+            );
+
+            setError(
+                "Unable to connect to server"
+            );
         }
     };
 
@@ -308,7 +481,9 @@ function AdminBlog() {
     // ===========================
 
     const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
+
+        const file =
+            e.target.files[0];
 
         if (!file) {
             return;
@@ -318,41 +493,72 @@ function AdminBlog() {
         setMessage("");
         setError("");
 
-        const token = localStorage.getItem("adminToken");
+        const token =
+            localStorage.getItem(
+                "adminToken"
+            );
 
         if (!token) {
-            navigate("/admin/login");
+
+            navigate(
+                "/admin/login"
+            );
+
             return;
         }
 
         try {
-            const formData = new FormData();
 
-            formData.append("image", file);
+            const formData =
+                new FormData();
 
-            const response = await fetch(
-                "http://localhost:5000/api/upload",
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: formData
-                }
+            formData.append(
+                "image",
+                file
             );
 
-            const data = await response.json();
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/upload`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        },
+
+                        body: formData
+                    }
+                );
+
+            const data =
+                await response.json();
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem("adminToken");
-                    localStorage.removeItem("adminEmail");
-                    navigate("/admin/login");
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "adminToken"
+                    );
+
+                    localStorage.removeItem(
+                        "adminEmail"
+                    );
+
+                    navigate(
+                        "/admin/login"
+                    );
+
                     return;
                 }
 
                 setError(
-                    data.message || "Image upload failed"
+                    data.message ||
+                    "Image upload failed"
                 );
 
                 return;
@@ -360,14 +566,27 @@ function AdminBlog() {
 
             setForm({
                 ...form,
-                image: data.imageUrl
+                image:
+                    data.imageUrl
             });
 
-            setMessage("Image uploaded successfully!");
+            setMessage(
+                "Image uploaded successfully!"
+            );
+
         } catch (error) {
-            console.error("Image upload error:", error);
-            setError("Image upload failed");
+
+            console.error(
+                "Image upload error:",
+                error
+            );
+
+            setError(
+                "Image upload failed"
+            );
+
         } finally {
+
             setUploading(false);
         }
     };
@@ -376,66 +595,317 @@ function AdminBlog() {
     // CHANGE PASSWORD
     // ===========================
 
-    const handleChangePassword = async (e) => {
-        e.preventDefault();
+    const handleChangePassword =
+        async (e) => {
 
-        setPasswordMessage("");
-        setPasswordError("");
+            e.preventDefault();
 
-        if (newPassword !== confirmPassword) {
-            setPasswordError(
-                "New passwords do not match"
-            );
-            return;
-        }
+            setPasswordMessage("");
+            setPasswordError("");
 
-        if (newPassword.length < 8) {
-            setPasswordError(
-                "New password must be at least 8 characters"
-            );
-            return;
-        }
+            if (
+                newPassword !==
+                confirmPassword
+            ) {
 
-        const token = localStorage.getItem("adminToken");
-        const email = localStorage.getItem("adminEmail");
-
-        if (!token || !email) {
-            navigate("/admin/login");
-            return;
-        }
-
-        setChangingPassword(true);
-
-        try {
-            const response = await fetch(
-                "http://localhost:5000/api/auth/change-password",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        currentPassword: currentPassword,
-                        newPassword: newPassword
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
                 setPasswordError(
-                    data.message || "Password change failed"
+                    "New passwords do not match"
                 );
 
                 return;
             }
 
-            setPasswordMessage(
-                "Password changed successfully!"
-            );
+            if (
+                newPassword.length < 8
+            ) {
+
+                setPasswordError(
+                    "New password must be at least 8 characters"
+                );
+
+                return;
+            }
+
+            const token =
+                localStorage.getItem(
+                    "adminToken"
+                );
+
+            const email =
+                localStorage.getItem(
+                    "adminEmail"
+                );
+
+            if (!token || !email) {
+
+                navigate(
+                    "/admin/login"
+                );
+
+                return;
+            }
+
+            setChangingPassword(true);
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/auth/change-password`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    `Bearer ${token}`
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    email,
+
+                                    currentPassword,
+
+                                    newPassword
+                                })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    setPasswordError(
+                        data.message ||
+                        "Password change failed"
+                    );
+
+                    return;
+                }
+
+                setPasswordMessage(
+                    "Password changed successfully!"
+                );
+
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+
+                setShowCurrentPassword(false);
+                setShowNewPassword(false);
+                setShowConfirmPassword(false);
+
+                setTimeout(() => {
+
+                    setShowChangePassword(
+                        false
+                    );
+
+                    setPasswordMessage("");
+
+                }, 1500);
+
+            } catch (error) {
+
+                console.error(
+                    "Change password error:",
+                    error
+                );
+
+                setPasswordError(
+                    "Unable to connect to server"
+                );
+
+            } finally {
+
+                setChangingPassword(
+                    false
+                );
+            }
+        };
+
+    // ===========================
+    // UPDATE EMAIL
+    // ===========================
+
+    const handleUpdateEmail =
+        async (e) => {
+
+            e.preventDefault();
+
+            setEmailMessage("");
+            setEmailError("");
+
+            const token =
+                localStorage.getItem(
+                    "adminToken"
+                );
+
+            const storedEmail =
+                localStorage.getItem(
+                    "adminEmail"
+                );
+
+            if (!token || !storedEmail) {
+
+                navigate(
+                    "/admin/login"
+                );
+
+                return;
+            }
+
+            if (!newEmail.trim()) {
+
+                setEmailError(
+                    "Please enter a new email address"
+                );
+
+                return;
+            }
+
+            if (
+                newEmail
+                    .trim()
+                    .toLowerCase() ===
+                storedEmail.toLowerCase()
+            ) {
+
+                setEmailError(
+                    "New email must be different from current email"
+                );
+
+                return;
+            }
+
+            setUpdatingEmail(true);
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/auth/update-email`,
+                        {
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    `Bearer ${token}`
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    currentEmail:
+                                        storedEmail,
+
+                                    newEmail:
+                                        newEmail.trim(),
+
+                                    currentPassword:
+                                        emailPassword
+                                })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    if (
+                        response.status === 401
+                    ) {
+
+                        localStorage.removeItem(
+                            "adminToken"
+                        );
+
+                        localStorage.removeItem(
+                            "adminEmail"
+                        );
+
+                        navigate(
+                            "/admin/login"
+                        );
+
+                        return;
+                    }
+
+                    setEmailError(
+                        data.message ||
+                        "Email update failed"
+                    );
+
+                    return;
+                }
+
+                localStorage.setItem(
+                    "adminEmail",
+                    data.email
+                );
+
+                setCurrentEmail(
+                    data.email
+                );
+
+                setEmailMessage(
+                    "Email updated successfully!"
+                );
+
+                setNewEmail("");
+                setEmailPassword("");
+                setShowEmailPassword(false);
+
+                setTimeout(() => {
+
+                    setShowUpdateEmail(
+                        false
+                    );
+
+                    setEmailMessage("");
+
+                }, 1500);
+
+            } catch (error) {
+
+                console.error(
+                    "Update email error:",
+                    error
+                );
+
+                setEmailError(
+                    "Unable to connect to server"
+                );
+
+            } finally {
+
+                setUpdatingEmail(
+                    false
+                );
+            }
+        };
+
+    // ===========================
+    // OPEN CHANGE PASSWORD
+    // ===========================
+
+    const openChangePassword =
+        () => {
+
+            setShowAccountMenu(false);
+
+            setPasswordMessage("");
+            setPasswordError("");
 
             setCurrentPassword("");
             setNewPassword("");
@@ -445,205 +915,80 @@ function AdminBlog() {
             setShowNewPassword(false);
             setShowConfirmPassword(false);
 
-            setTimeout(() => {
-                setShowChangePassword(false);
-                setPasswordMessage("");
-            }, 1500);
-        } catch (error) {
-            console.error(
-                "Change password error:",
-                error
-            );
-
-            setPasswordError(
-                "Unable to connect to server"
-            );
-        } finally {
-            setChangingPassword(false);
-        }
-    };
+            setShowChangePassword(true);
+        };
 
     // ===========================
-    // UPDATE EMAIL
+    // OPEN UPDATE EMAIL
     // ===========================
 
-    const handleUpdateEmail = async (e) => {
-        e.preventDefault();
+    const openUpdateEmail =
+        () => {
 
-        setEmailMessage("");
-        setEmailError("");
+            setShowAccountMenu(false);
 
-        const token = localStorage.getItem("adminToken");
-        const storedEmail = localStorage.getItem("adminEmail");
+            setEmailMessage("");
+            setEmailError("");
 
-        if (!token || !storedEmail) {
-            navigate("/admin/login");
-            return;
-        }
-
-        if (!newEmail.trim()) {
-            setEmailError(
-                "Please enter a new email address"
-            );
-
-            return;
-        }
-
-        if (
-            newEmail.trim().toLowerCase() ===
-            storedEmail.toLowerCase()
-        ) {
-            setEmailError(
-                "New email must be different from current email"
-            );
-
-            return;
-        }
-
-        setUpdatingEmail(true);
-
-        try {
-            const response = await fetch(
-                "http://localhost:5000/api/auth/update-email",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        currentEmail: storedEmail,
-                        newEmail: newEmail.trim(),
-                        currentPassword: emailPassword
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem("adminToken");
-                    localStorage.removeItem("adminEmail");
-                    navigate("/admin/login");
-                    return;
-                }
-
-                setEmailError(
-                    data.message || "Email update failed"
-                );
-
-                return;
-            }
-
-            localStorage.setItem(
-                "adminEmail",
-                data.email
-            );
-
-            setCurrentEmail(data.email);
-
-            setEmailMessage(
-                "Email updated successfully!"
+            setCurrentEmail(
+                localStorage.getItem(
+                    "adminEmail"
+                ) || ""
             );
 
             setNewEmail("");
             setEmailPassword("");
             setShowEmailPassword(false);
 
-            setTimeout(() => {
-                setShowUpdateEmail(false);
-                setEmailMessage("");
-            }, 1500);
-        } catch (error) {
-            console.error(
-                "Update email error:",
-                error
-            );
-
-            setEmailError(
-                "Unable to connect to server"
-            );
-        } finally {
-            setUpdatingEmail(false);
-        }
-    };
-
-    // ===========================
-    // OPEN CHANGE PASSWORD
-    // ===========================
-
-    const openChangePassword = () => {
-        setShowAccountMenu(false);
-
-        setPasswordMessage("");
-        setPasswordError("");
-
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-
-        setShowCurrentPassword(false);
-        setShowNewPassword(false);
-        setShowConfirmPassword(false);
-
-        setShowChangePassword(true);
-    };
-
-    // ===========================
-    // OPEN UPDATE EMAIL
-    // ===========================
-
-    const openUpdateEmail = () => {
-        setShowAccountMenu(false);
-
-        setEmailMessage("");
-        setEmailError("");
-
-        setCurrentEmail(
-            localStorage.getItem("adminEmail") || ""
-        );
-
-        setNewEmail("");
-        setEmailPassword("");
-        setShowEmailPassword(false);
-
-        setShowUpdateEmail(true);
-    };
+            setShowUpdateEmail(true);
+        };
 
     // ===========================
     // LOGOUT
     // ===========================
 
     const handleLogout = () => {
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("adminEmail");
 
-        navigate("/admin/login");
+        localStorage.removeItem(
+            "adminToken"
+        );
+
+        localStorage.removeItem(
+            "adminEmail"
+        );
+
+        navigate(
+            "/admin/login"
+        );
     };
 
     // ===========================
     // FORGOT PASSWORD
     // ===========================
 
-    const handleForgotPassword = () => {
-        setShowAccountMenu(false);
+    const handleForgotPassword =
+        () => {
 
-        alert(
-            "Forgot password recovery requires an email/OTP reset process. Please contact the system administrator."
-        );
-    };
+            setShowAccountMenu(false);
+
+            alert(
+                "Forgot password recovery requires an email/OTP reset process. Please contact the system administrator."
+            );
+        };
 
     // ===========================
     // FORMAT DATE
     // ===========================
 
     const formatDate = (date) => {
+
         if (!date) {
             return "";
         }
 
-        return new Date(date).toLocaleDateString(
+        return new Date(
+            date
+        ).toLocaleDateString(
             "en-US",
             {
                 month: "short",
@@ -658,23 +1003,24 @@ function AdminBlog() {
     // ===========================
 
     return (
+
         <div className="admin-blog-page">
 
-            {/* ===========================
-                HEADER
-            =========================== */}
+            {/* HEADER */}
 
             <div className="admin-header">
 
                 <div>
-                    <h1>Blog Admin</h1>
+
+                    <h1>
+                        Blog Admin
+                    </h1>
 
                     <p>
                         Manage your website articles and content
                     </p>
-                </div>
 
-                {/* ACCOUNT BUTTONS */}
+                </div>
 
                 <div className="admin-header-actions">
 
@@ -693,35 +1039,36 @@ function AdminBlog() {
                         </button>
 
                         {showAccountMenu && (
+
                             <div className="account-dropdown">
 
                                 <div className="account-dropdown-title">
                                     Admin Account
                                 </div>
 
-                                {/* UPDATE EMAIL */}
-
                                 <button
                                     type="button"
-                                    onClick={openUpdateEmail}
+                                    onClick={
+                                        openUpdateEmail
+                                    }
                                 >
                                     ✉️ Update Email
                                 </button>
 
-                                {/* CHANGE PASSWORD */}
-
                                 <button
                                     type="button"
-                                    onClick={openChangePassword}
+                                    onClick={
+                                        openChangePassword
+                                    }
                                 >
                                     🔐 Change Password
                                 </button>
 
-                                {/* FORGOT PASSWORD */}
-
                                 <button
                                     type="button"
-                                    onClick={handleForgotPassword}
+                                    onClick={
+                                        handleForgotPassword
+                                    }
                                 >
                                     ❓ Forgot Password
                                 </button>
@@ -731,27 +1078,28 @@ function AdminBlog() {
 
                     </div>
 
-                    {/* NORMAL LOGOUT BUTTON */}
-
                     <button
                         type="button"
                         className="admin-logout-btn"
-                        onClick={handleLogout}
+                        onClick={
+                            handleLogout
+                        }
                     >
                         🔒 Logout
                     </button>
 
                 </div>
 
-                {/* ===========================
-                    UPDATE EMAIL MODAL
-                =========================== */}
+                {/* UPDATE EMAIL MODAL */}
 
                 {showUpdateEmail && (
+
                     <div
                         className="password-modal-overlay"
                         onClick={() =>
-                            setShowUpdateEmail(false)
+                            setShowUpdateEmail(
+                                false
+                            )
                         }
                     >
 
@@ -761,8 +1109,6 @@ function AdminBlog() {
                                 e.stopPropagation()
                             }
                         >
-
-                            {/* MODAL HEADER */}
 
                             <div className="password-modal-header">
 
@@ -782,9 +1128,18 @@ function AdminBlog() {
                                     type="button"
                                     className="password-modal-close"
                                     onClick={() => {
-                                        setShowUpdateEmail(false);
-                                        setEmailMessage("");
-                                        setEmailError("");
+
+                                        setShowUpdateEmail(
+                                            false
+                                        );
+
+                                        setEmailMessage(
+                                            ""
+                                        );
+
+                                        setEmailError(
+                                            ""
+                                        );
                                     }}
                                 >
                                     ×
@@ -792,11 +1147,11 @@ function AdminBlog() {
 
                             </div>
 
-                            {/* EMAIL FORM */}
-
-                            <form onSubmit={handleUpdateEmail}>
-
-                                {/* CURRENT EMAIL */}
+                            <form
+                                onSubmit={
+                                    handleUpdateEmail
+                                }
+                            >
 
                                 <div className="password-field">
 
@@ -806,13 +1161,13 @@ function AdminBlog() {
 
                                     <input
                                         type="email"
-                                        value={currentEmail}
+                                        value={
+                                            currentEmail
+                                        }
                                         readOnly
                                     />
 
                                 </div>
-
-                                {/* NEW EMAIL */}
 
                                 <div className="password-field">
 
@@ -822,7 +1177,9 @@ function AdminBlog() {
 
                                     <input
                                         type="email"
-                                        value={newEmail}
+                                        value={
+                                            newEmail
+                                        }
                                         onChange={(e) =>
                                             setNewEmail(
                                                 e.target.value
@@ -833,8 +1190,6 @@ function AdminBlog() {
                                     />
 
                                 </div>
-
-                                {/* CURRENT PASSWORD */}
 
                                 <div className="password-field">
 
@@ -850,7 +1205,9 @@ function AdminBlog() {
                                                     ? "text"
                                                     : "password"
                                             }
-                                            value={emailPassword}
+                                            value={
+                                                emailPassword
+                                            }
                                             onChange={(e) =>
                                                 setEmailPassword(
                                                     e.target.value
@@ -868,11 +1225,6 @@ function AdminBlog() {
                                                     !showEmailPassword
                                                 )
                                             }
-                                            aria-label={
-                                                showEmailPassword
-                                                    ? "Hide password"
-                                                    : "Show password"
-                                            }
                                         >
                                             {showEmailPassword
                                                 ? "🙈"
@@ -883,23 +1235,21 @@ function AdminBlog() {
 
                                 </div>
 
-                                {/* ERROR */}
-
                                 {emailError && (
+
                                     <div className="admin-error">
                                         {emailError}
                                     </div>
+
                                 )}
 
-                                {/* SUCCESS */}
-
                                 {emailMessage && (
+
                                     <div className="admin-success">
                                         {emailMessage}
                                     </div>
-                                )}
 
-                                {/* BUTTONS */}
+                                )}
 
                                 <div className="password-modal-actions">
 
@@ -907,9 +1257,18 @@ function AdminBlog() {
                                         type="button"
                                         className="admin-secondary-btn"
                                         onClick={() => {
-                                            setShowUpdateEmail(false);
-                                            setEmailMessage("");
-                                            setEmailError("");
+
+                                            setShowUpdateEmail(
+                                                false
+                                            );
+
+                                            setEmailMessage(
+                                                ""
+                                            );
+
+                                            setEmailError(
+                                                ""
+                                            );
                                         }}
                                     >
                                         Cancel
@@ -918,7 +1277,9 @@ function AdminBlog() {
                                     <button
                                         type="submit"
                                         className="admin-primary-btn"
-                                        disabled={updatingEmail}
+                                        disabled={
+                                            updatingEmail
+                                        }
                                     >
                                         {updatingEmail
                                             ? "Updating..."
@@ -934,15 +1295,16 @@ function AdminBlog() {
                     </div>
                 )}
 
-                {/* ===========================
-                    CHANGE PASSWORD MODAL
-                =========================== */}
+                {/* CHANGE PASSWORD MODAL */}
 
                 {showChangePassword && (
+
                     <div
                         className="password-modal-overlay"
                         onClick={() =>
-                            setShowChangePassword(false)
+                            setShowChangePassword(
+                                false
+                            )
                         }
                     >
 
@@ -952,8 +1314,6 @@ function AdminBlog() {
                                 e.stopPropagation()
                             }
                         >
-
-                            {/* MODAL HEADER */}
 
                             <div className="password-modal-header">
 
@@ -973,9 +1333,18 @@ function AdminBlog() {
                                     type="button"
                                     className="password-modal-close"
                                     onClick={() => {
-                                        setShowChangePassword(false);
-                                        setPasswordMessage("");
-                                        setPasswordError("");
+
+                                        setShowChangePassword(
+                                            false
+                                        );
+
+                                        setPasswordMessage(
+                                            ""
+                                        );
+
+                                        setPasswordError(
+                                            ""
+                                        );
                                     }}
                                 >
                                     ×
@@ -983,10 +1352,10 @@ function AdminBlog() {
 
                             </div>
 
-                            {/* PASSWORD FORM */}
-
                             <form
-                                onSubmit={handleChangePassword}
+                                onSubmit={
+                                    handleChangePassword
+                                }
                             >
 
                                 {/* CURRENT PASSWORD */}
@@ -1005,7 +1374,9 @@ function AdminBlog() {
                                                     ? "text"
                                                     : "password"
                                             }
-                                            value={currentPassword}
+                                            value={
+                                                currentPassword
+                                            }
                                             onChange={(e) =>
                                                 setCurrentPassword(
                                                     e.target.value
@@ -1022,11 +1393,6 @@ function AdminBlog() {
                                                 setShowCurrentPassword(
                                                     !showCurrentPassword
                                                 )
-                                            }
-                                            aria-label={
-                                                showCurrentPassword
-                                                    ? "Hide current password"
-                                                    : "Show current password"
                                             }
                                         >
                                             {showCurrentPassword
@@ -1054,7 +1420,9 @@ function AdminBlog() {
                                                     ? "text"
                                                     : "password"
                                             }
-                                            value={newPassword}
+                                            value={
+                                                newPassword
+                                            }
                                             onChange={(e) =>
                                                 setNewPassword(
                                                     e.target.value
@@ -1071,11 +1439,6 @@ function AdminBlog() {
                                                 setShowNewPassword(
                                                     !showNewPassword
                                                 )
-                                            }
-                                            aria-label={
-                                                showNewPassword
-                                                    ? "Hide new password"
-                                                    : "Show new password"
                                             }
                                         >
                                             {showNewPassword
@@ -1103,7 +1466,9 @@ function AdminBlog() {
                                                     ? "text"
                                                     : "password"
                                             }
-                                            value={confirmPassword}
+                                            value={
+                                                confirmPassword
+                                            }
                                             onChange={(e) =>
                                                 setConfirmPassword(
                                                     e.target.value
@@ -1121,11 +1486,6 @@ function AdminBlog() {
                                                     !showConfirmPassword
                                                 )
                                             }
-                                            aria-label={
-                                                showConfirmPassword
-                                                    ? "Hide confirm password"
-                                                    : "Show confirm password"
-                                            }
                                         >
                                             {showConfirmPassword
                                                 ? "🙈"
@@ -1136,23 +1496,21 @@ function AdminBlog() {
 
                                 </div>
 
-                                {/* ERROR */}
-
                                 {passwordError && (
+
                                     <div className="admin-error">
                                         {passwordError}
                                     </div>
+
                                 )}
 
-                                {/* SUCCESS */}
-
                                 {passwordMessage && (
+
                                     <div className="admin-success">
                                         {passwordMessage}
                                     </div>
-                                )}
 
-                                {/* MODAL BUTTONS */}
+                                )}
 
                                 <div className="password-modal-actions">
 
@@ -1160,9 +1518,18 @@ function AdminBlog() {
                                         type="button"
                                         className="admin-secondary-btn"
                                         onClick={() => {
-                                            setShowChangePassword(false);
-                                            setPasswordMessage("");
-                                            setPasswordError("");
+
+                                            setShowChangePassword(
+                                                false
+                                            );
+
+                                            setPasswordMessage(
+                                                ""
+                                            );
+
+                                            setPasswordError(
+                                                ""
+                                            );
                                         }}
                                     >
                                         Cancel
@@ -1171,7 +1538,9 @@ function AdminBlog() {
                                     <button
                                         type="submit"
                                         className="admin-primary-btn"
-                                        disabled={changingPassword}
+                                        disabled={
+                                            changingPassword
+                                        }
                                     >
                                         {changingPassword
                                             ? "Updating..."
@@ -1189,15 +1558,11 @@ function AdminBlog() {
 
             </div>
 
-            {/* ===========================
-                MAIN ADMIN CONTAINER
-            =========================== */}
+            {/* MAIN ADMIN CONTAINER */}
 
             <div className="admin-container">
 
-                {/* ===========================
-                    CREATE / UPDATE FORM
-                =========================== */}
+                {/* CREATE / UPDATE FORM */}
 
                 <div className="admin-form-card">
 
@@ -1207,7 +1572,11 @@ function AdminBlog() {
                             : "Create New Blog"}
                     </h2>
 
-                    <form onSubmit={handleSubmit}>
+                    <form
+                        onSubmit={
+                            handleSubmit
+                        }
+                    >
 
                         {/* TITLE */}
 
@@ -1220,8 +1589,12 @@ function AdminBlog() {
                             <input
                                 type="text"
                                 name="title"
-                                value={form.title}
-                                onChange={handleChange}
+                                value={
+                                    form.title
+                                }
+                                onChange={
+                                    handleChange
+                                }
                                 placeholder="Enter blog title"
                                 required
                             />
@@ -1238,8 +1611,12 @@ function AdminBlog() {
 
                             <textarea
                                 name="description"
-                                value={form.description}
-                                onChange={handleChange}
+                                value={
+                                    form.description
+                                }
+                                onChange={
+                                    handleChange
+                                }
                                 placeholder="Enter a short description"
                                 required
                             />
@@ -1256,8 +1633,12 @@ function AdminBlog() {
 
                             <textarea
                                 name="content"
-                                value={form.content}
-                                onChange={handleChange}
+                                value={
+                                    form.content
+                                }
+                                onChange={
+                                    handleChange
+                                }
                                 placeholder="Write your blog content here. Use blank lines between paragraphs."
                                 rows="10"
                                 required
@@ -1278,14 +1659,21 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="image"
-                                    value={form.image}
-                                    onChange={handleChange}
+                                    value={
+                                        form.image
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="https://example.com/image.jpg"
                                 />
 
                                 {form.image && (
+
                                     <img
-                                        src={form.image}
+                                        src={
+                                            form.image
+                                        }
                                         alt="Preview"
                                         className="admin-image-preview"
                                         onError={(e) => {
@@ -1293,6 +1681,7 @@ function AdminBlog() {
                                                 "none";
                                         }}
                                     />
+
                                 )}
 
                             </div>
@@ -1335,8 +1724,12 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="author"
-                                    value={form.author}
-                                    onChange={handleChange}
+                                    value={
+                                        form.author
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="Enter author"
                                 />
 
@@ -1351,8 +1744,12 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="category"
-                                    value={form.category}
-                                    onChange={handleChange}
+                                    value={
+                                        form.category
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="Enter category"
                                 />
 
@@ -1360,9 +1757,7 @@ function AdminBlog() {
 
                         </div>
 
-                        {/* ===========================
-                            SEO SETTINGS
-                        =========================== */}
+                        {/* SEO SETTINGS */}
 
                         <div className="seo-section">
 
@@ -1381,8 +1776,12 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="seoTitle"
-                                    value={form.seoTitle}
-                                    onChange={handleChange}
+                                    value={
+                                        form.seoTitle
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="Enter SEO title"
                                     maxLength="255"
                                 />
@@ -1402,7 +1801,9 @@ function AdminBlog() {
                                     value={
                                         form.metaDescription
                                     }
-                                    onChange={handleChange}
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="Enter meta description"
                                     maxLength="500"
                                     rows="3"
@@ -1421,8 +1822,12 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="seoKeywords"
-                                    value={form.seoKeywords}
-                                    onChange={handleChange}
+                                    value={
+                                        form.seoKeywords
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="cybersecurity, data security, encryption"
                                     maxLength="500"
                                 />
@@ -1440,8 +1845,12 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="focusKeyword"
-                                    value={form.focusKeyword}
-                                    onChange={handleChange}
+                                    value={
+                                        form.focusKeyword
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="Enter focus keyword"
                                     maxLength="255"
                                 />
@@ -1459,8 +1868,12 @@ function AdminBlog() {
                                 <input
                                     type="text"
                                     name="urlSlug"
-                                    value={form.urlSlug}
-                                    onChange={handleChange}
+                                    value={
+                                        form.urlSlug
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="protection-and-encryption"
                                     maxLength="255"
                                 />
@@ -1478,8 +1891,12 @@ function AdminBlog() {
                                 <input
                                     type="url"
                                     name="canonicalUrl"
-                                    value={form.canonicalUrl}
-                                    onChange={handleChange}
+                                    value={
+                                        form.canonicalUrl
+                                    }
+                                    onChange={
+                                        handleChange
+                                    }
                                     placeholder="https://cynox-security-blog.vercel.app/blog/..."
                                     maxLength="500"
                                 />
@@ -1502,6 +1919,7 @@ function AdminBlog() {
                             </button>
 
                             {editingId && (
+
                                 <button
                                     type="button"
                                     className="admin-secondary-btn"
@@ -1511,31 +1929,32 @@ function AdminBlog() {
                                 >
                                     Cancel
                                 </button>
+
                             )}
 
                         </div>
 
                     </form>
 
-                    {/* MESSAGES */}
-
                     {message && (
+
                         <div className="admin-success">
                             {message}
                         </div>
+
                     )}
 
                     {error && (
+
                         <div className="admin-error">
                             {error}
                         </div>
+
                     )}
 
                 </div>
 
-                {/* ===========================
-                    EXISTING BLOGS
-                =========================== */}
+                {/* EXISTING BLOGS */}
 
                 <div className="admin-blogs-section">
 
@@ -1552,39 +1971,37 @@ function AdminBlog() {
                                 key={blog.ID}
                             >
 
-                                {/* BLOG IMAGE */}
-
                                 {blog.IMAGE && (
+
                                     <img
-                                        src={blog.IMAGE}
-                                        alt={blog.TITLE}
+                                        src={
+                                            blog.IMAGE
+                                        }
+                                        alt={
+                                            blog.TITLE
+                                        }
                                         className="admin-blog-card-image"
                                     />
+
                                 )}
 
                                 <div className="admin-blog-card-content">
 
-                                    {/* CATEGORY */}
-
                                     {blog.CATEGORY && (
+
                                         <div className="admin-blog-category">
                                             {blog.CATEGORY}
                                         </div>
-                                    )}
 
-                                    {/* TITLE */}
+                                    )}
 
                                     <h3>
                                         {blog.TITLE}
                                     </h3>
 
-                                    {/* DESCRIPTION */}
-
                                     <p>
                                         {blog.DESCRIPTION}
                                     </p>
-
-                                    {/* AUTHOR + DATE */}
 
                                     <p>
                                         By {blog.AUTHOR}
@@ -1593,8 +2010,6 @@ function AdminBlog() {
                                             blog.CREATED_AT
                                         )}
                                     </p>
-
-                                    {/* EDIT / DELETE */}
 
                                     <div className="admin-card-actions">
 
