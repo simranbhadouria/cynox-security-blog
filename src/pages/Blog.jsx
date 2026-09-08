@@ -8,7 +8,7 @@ function Blog() {
     const [selectedBlog, setSelectedBlog] = useState(null);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/blogs")
+        fetch("https://cynox-security-blog-1.onrender.com/api/blogs")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch blogs");
