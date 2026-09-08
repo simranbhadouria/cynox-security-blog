@@ -15,7 +15,7 @@ function AdminLogin() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/auth/login",
+                "https://cynox-security-blog-1.onrender.com/api/auth/login",
                 {
                     method: "POST",
                     headers: {
